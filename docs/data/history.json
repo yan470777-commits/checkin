@@ -15,5 +15,22 @@
       "failed": 0,
       "skipped": 2
     }
+  },
+  {
+    "date": "2026-10-27",
+    "updated_at": "2026-10-27 05:40:28",
+    "summary": {
+      "total": 12,
+      "done": 8,
+      "miss": 0,
+      "unknown": 1,
+      "fail": 1,
+      "skipped": 2
+    },
+    "checkin_run": {
+      "success": 10,
+      "failed": 0,
+      "skipped": 2
+    }
   }
 ]
