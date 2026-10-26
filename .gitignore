@@ -1,0 +1,8 @@
+# 凭证与本地运行产物，切勿提交
+.env
+.env.local
+*.env.bak
+logs/
+*.log
+__pycache__/
+*.pyc
