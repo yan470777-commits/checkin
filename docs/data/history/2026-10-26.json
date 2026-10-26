@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-26 15:01:01",
+  "updated_at": "2026-10-26 15:43:11",
   "date": "2026-10-26",
   "month": "2026-10",
-  "source": "本地 .env",
+  "source": "环境变量 NEWAPI_ACCOUNTS",
   "summary": {
     "total": 12,
     "done": 9,
@@ -11,7 +11,11 @@
     "fail": 0,
     "skipped": 2
   },
-  "checkin_run": {},
+  "checkin_run": {
+    "success": 10,
+    "failed": 0,
+    "skipped": 2
+  },
   "sites": [
     {
       "name": "站1-nemodesk",
@@ -24,7 +28,12 @@
       "total_quota_text": "",
       "note": "标准签到未启用（Check-in feature is not enabled），按签到日志判定",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "今日已签到（+42 白银）",
+        "quota_awarded": 42,
+        "advice": ""
+      }
     },
     {
       "name": "站2-crouter",
@@ -50,7 +59,12 @@
       "total_quota_text": "",
       "note": "签到功能未启用",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "该站未开启签到功能（无需签到）",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站4-xingya",
@@ -63,7 +77,12 @@
       "total_quota_text": "5.47M",
       "note": "标准签到已停用，按「每日领取」签到日志判定",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "今日已领取（150000 额度）",
+        "quota_awarded": 150000,
+        "advice": ""
+      }
     },
     {
       "name": "站5-catcat",
@@ -76,7 +95,12 @@
       "total_quota_text": "925.56M",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "Already checked in today",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站6-limao",
@@ -89,7 +113,12 @@
       "total_quota_text": "247.70K",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "今日已签到 (Turnstile)",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站7-wanwanzhou",
@@ -115,7 +144,12 @@
       "total_quota_text": "470.68K",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "Already checked in today (Turnstile)",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站9-htai91",
@@ -128,7 +162,12 @@
       "total_quota_text": "19.99M",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "Already checked in today",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站10-arityflow",
@@ -141,7 +180,12 @@
       "total_quota_text": "",
       "note": "签到走独立子站 https://qd.***.top，连签 1 天 / 累计 15 天",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "今日已签到（连签 1 天）",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站11-kapibala",
@@ -154,7 +198,12 @@
       "total_quota_text": "1.10M",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "今日已签到",
+        "quota_awarded": null,
+        "advice": ""
+      }
     },
     {
       "name": "站12-changchunxu",
@@ -167,7 +216,12 @@
       "total_quota_text": "69.31K",
       "note": "",
       "error": "",
-      "checkin": null
+      "checkin": {
+        "success": true,
+        "message": "Already checked in today",
+        "quota_awarded": null,
+        "advice": ""
+      }
     }
   ]
 }

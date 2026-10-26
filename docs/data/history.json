@@ -1,7 +1,7 @@
 [
   {
     "date": "2026-10-26",
-    "updated_at": "2026-10-26 15:01:01",
+    "updated_at": "2026-10-26 15:43:11",
     "summary": {
       "total": 12,
       "done": 9,
@@ -10,6 +10,10 @@
       "fail": 0,
       "skipped": 2
     },
-    "checkin_run": {}
+    "checkin_run": {
+      "success": 10,
+      "failed": 0,
+      "skipped": 2
+    }
   }
 ]
