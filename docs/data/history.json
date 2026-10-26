@@ -1,13 +1,13 @@
 [
   {
     "date": "2026-10-26",
-    "updated_at": "2026-10-26 15:43:11",
+    "updated_at": "2026-10-26 15:55:05",
     "summary": {
       "total": 12,
-      "done": 9,
+      "done": 8,
       "miss": 0,
       "unknown": 1,
-      "fail": 0,
+      "fail": 1,
       "skipped": 2
     },
     "checkin_run": {

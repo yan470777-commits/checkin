@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-26 15:43:11",
+  "updated_at": "2026-10-26 15:55:05",
   "date": "2026-10-26",
   "month": "2026-10",
   "source": "环境变量 NEWAPI_ACCOUNTS",
   "summary": {
     "total": 12,
-    "done": 9,
+    "done": 8,
     "miss": 0,
     "unknown": 1,
-    "fail": 0,
+    "fail": 1,
     "skipped": 2
   },
   "checkin_run": {
@@ -20,14 +20,14 @@
     {
       "name": "站1-nemodesk",
       "site": "https://origin.***.top",
-      "user": "***",
-      "state": "done",
+      "user": "",
+      "state": "fail",
       "month_days": null,
       "total_days": null,
       "total_quota": null,
       "total_quota_text": "",
-      "note": "标准签到未启用（Check-in feature is not enabled），按签到日志判定",
-      "error": "",
+      "note": "",
+      "error": "请求超时",
       "checkin": {
         "success": true,
         "message": "今日已签到（+42 白银）",
