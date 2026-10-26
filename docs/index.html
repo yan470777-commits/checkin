@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>签到状态</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #ffffff; --text: #1a2233; --muted: #6b7793;
+    --line: #e6eaf3; --done: #16a34a; --miss: #ef4444; --unknown: #f59e0b;
+    --fail: #b91c1c; --skip: #64748b; --accent: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1120; --card: #141c2e; --text: #e6ecf7; --muted: #93a1bd;
+      --line: #24314a; --done: #4ade80; --miss: #f87171; --unknown: #fbbf24;
+      --fail: #fca5a5; --skip: #94a3b8; --accent: #60a5fa;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 16px 14px 40px; background: var(--bg); color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", Roboto, sans-serif;
+  }
+  header { padding: 4px 2px 14px; }
+  h1 { font-size: 19px; margin: 0 0 4px; letter-spacing: .3px; }
+  .sub { color: var(--muted); font-size: 12.5px; }
+  .bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 16px; }
+  .pill {
+    flex: 1 1 64px; min-width: 64px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 9px 6px; text-align: center;
+  }
+  .pill b { display: block; font-size: 19px; line-height: 1.25; }
+  .pill span { font-size: 11.5px; color: var(--muted); }
+  .pill.done b { color: var(--done); } .pill.miss b { color: var(--miss); }
+  .pill.unknown b { color: var(--unknown); } .pill.fail b { color: var(--fail); }
+  .pill.skip b { color: var(--skip); }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 13px 14px; margin-bottom: 10px;
+  }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .name { font-weight: 600; font-size: 15px; }
+  .tag {
+    margin-left: auto; font-size: 12px; font-weight: 600; padding: 3px 9px;
+    border-radius: 999px; white-space: nowrap; border: 1px solid currentColor;
+  }
+  .tag.done { color: var(--done); } .tag.miss { color: var(--miss); }
+  .tag.unknown { color: var(--unknown); } .tag.fail { color: var(--fail); }
+  .tag.skipped { color: var(--skip); }
+  .meta { color: var(--muted); font-size: 12.5px; margin-top: 5px; word-break: break-all; }
+  .note { font-size: 12.5px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); }
+  .err { color: var(--fail); }
+  .ck { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+  .ck b { color: var(--text); }
+  button {
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); color: var(--accent); font-size: 15px; font-weight: 600;
+  }
+  button:active { opacity: .65; }
+  h2 { font-size: 14px; margin: 22px 2px 8px; color: var(--muted); font-weight: 600; }
+  .hist { font-size: 13px; display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .hist:last-child { border-bottom: 0; }
+  footer { color: var(--muted); font-size: 11.5px; text-align: center; margin-top: 22px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>每日签到状态</h1>
+  <div class="sub" id="updated">加载中…</div>
+</header>
+
+<div class="bar" id="summary"></div>
+<button id="refresh">刷新</button>
+
+<div id="sites"></div>
+<h2>最近记录</h2>
+<div class="card" id="history"><div class="meta">加载中…</div></div>
+
+<footer>
+  数据由 GitHub Actions 每天 01:00（北京时间）自动更新<br>
+  本页只读，不会触发签到
+</footer>
+<script>
+const LABEL = { done: '✅ 已签', miss: '⭕ 未签', unknown: '❓ 未知', fail: '❌ 失败', skipped: '👋 手动' };
+const PILLS = [['done', '已签'], ['miss', '未签'], ['unknown', '未知'], ['fail', '失败'], ['skipped', '手动']];
+
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+function render(data) {
+  document.getElementById('updated').textContent =
+    '更新于 ' + (data.updated_at || '未知') + ' · 共 ' + ((data.summary || {}).total || 0) + ' 站';
+  if (data.error) {
+    document.getElementById('updated').textContent = '⚠️ ' + data.error;
+  }
+
+  const s = data.summary || {};
+  const bar = document.getElementById('summary');
+  bar.innerHTML = PILLS.filter(([k]) => s[k] !== undefined)
+    .map(([k, label]) => '<div class="pill ' + k + '"><b>' + (s[k] || 0) + '</b><span>' + label + '</span></div>')
+    .join('');
+
+  const box = document.getElementById('sites');
+  box.innerHTML = (data.sites || []).map(site => {
+    const meta = [];
+    if (site.site) meta.push(esc(site.site));
+    if (site.user) meta.push('用户 ' + esc(site.user));
+    if (site.month_days != null) meta.push('本月 ' + site.month_days + ' 天');
+    if (site.total_days != null) meta.push('累计 ' + site.total_days + ' 天');
+    if (site.total_quota_text) meta.push(esc(site.total_quota_text) + ' 额度');
+
+    let ck = '';
+    const c = site.checkin;
+    if (c) {
+      const award = c.quota_awarded ? '（+' + esc(c.quota_awarded) + '）' : '';
+      ck = '<div class="ck">今日签到：<b>' + (c.success ? '成功' + award : '失败') + '</b> ' +
+           esc(c.message || '') + (c.advice ? '<br>建议：' + esc(c.advice) : '') + '</div>';
+    }
+
+    return '<div class="card">' +
+      '<div class="row"><span class="name">' + esc(site.name) + '</span>' +
+      '<span class="tag ' + esc(site.state) + '">' + (LABEL[site.state] || esc(site.state)) + '</span></div>' +
+      (meta.length ? '<div class="meta">' + meta.join(' · ') + '</div>' : '') +
+      (site.note ? '<div class="note">' + esc(site.note) + '</div>' : '') +
+      (site.error ? '<div class="note err">' + esc(site.error) + '</div>' : '') +
+      ck +
+      '</div>';
+  }).join('') || '<div class="card"><div class="meta">暂无数据</div></div>';
+}
+
+function renderHistory(list) {
+  const box = document.getElementById('history');
+  if (!Array.isArray(list) || !list.length) {
+    box.innerHTML = '<div class="meta">暂无历史记录</div>';
+    return;
+  }
+  box.innerHTML = list.slice(-14).reverse().map(h => {
+    const s = h.summary || {};
+    return '<div class="hist"><span>' + esc(h.date) + '</span><span>✅ ' + (s.done || 0) +
+      ' · ⭕ ' + (s.miss || 0) + ' · ❓ ' + (s.unknown || 0) + ' · ❌ ' + (s.fail || 0) + '</span></div>';
+  }).join('');
+}
+
+async function load() {
+  const bust = '?t=' + Date.now();
+  try {
+    const res = await fetch('data/latest.json' + bust, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    render(await res.json());
+  } catch (e) {
+    document.getElementById('updated').textContent =
+      '读取失败：' + e.message + '（云端还没跑过第一次任务，或页面不在 docs 目录下）';
+  }
+  try {
+    const hr = await fetch('data/history.json' + bust, { cache: 'no-store' });
+    if (hr.ok) renderHistory(await hr.json());
+  } catch (e) { /* 历史是可选数据 */ }
+}
+
+document.getElementById('refresh').addEventListener('click', load);
+load();
+</script>
+</body>
+</html>
