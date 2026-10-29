@@ -14,7 +14,7 @@
   },
   {
     "date": "2026-10-29",
-    "updated_at": "2026-10-29 13:33:45",
+    "updated_at": "2026-10-29 14:32:25",
     "summary": {
       "total": 12,
       "done": 9,
@@ -24,8 +24,8 @@
       "skipped": 2
     },
     "checkin_run": {
-      "success": 10,
-      "failed": 0,
+      "success": 9,
+      "failed": 1,
       "skipped": 2
     }
   }

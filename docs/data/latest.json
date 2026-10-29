@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-29 13:33:45",
+  "updated_at": "2026-10-29 14:32:25",
   "date": "2026-10-29",
   "month": "2026-10",
-  "source": "本地 .env",
+  "source": "环境变量 NEWAPI_ACCOUNTS",
   "summary": {
     "total": 12,
     "done": 9,
@@ -12,8 +12,8 @@
     "skipped": 2
   },
   "checkin_run": {
-    "success": 10,
-    "failed": 0,
+    "success": 9,
+    "failed": 1,
     "skipped": 2
   },
   "sites": [
@@ -69,13 +69,13 @@
     {
       "name": "站4-xingya",
       "site": "https://xingya.***.site",
-      "user": "",
+      "user": "***",
       "state": "done",
-      "month_days": null,
-      "total_days": null,
-      "total_quota": null,
-      "total_quota_text": "",
-      "note": "只读查询失败（请求超时），以当天签到结果为准",
+      "month_days": 11,
+      "total_days": 45,
+      "total_quota": 5466892,
+      "total_quota_text": "5.47M",
+      "note": "标准签到已停用，按「每日领取」签到日志判定",
       "error": "",
       "checkin": {
         "success": true,
@@ -181,8 +181,8 @@
       "note": "签到走独立子站 https://qd.***.top，连签 4 天 / 累计 18 天",
       "error": "",
       "checkin": {
-        "success": true,
-        "message": "今日已签到（连签 4 天）",
+        "success": false,
+        "message": "HTTPSConnectionPool(host='qd.arityflow.top', port=443): Max retries exceeded with url: /api/auth/login (Caused by ConnectTimeoutError(<HTTPSConnection(host='qd.arityflow.top', port=443) at 0x7f35005a9f90>, 'Connection to qd.arityflow.top timed out. (connect timeout=60)'))",
         "quota_awarded": null,
         "advice": ""
       }
