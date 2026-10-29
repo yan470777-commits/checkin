@@ -376,6 +376,59 @@ def solve_and_checkin(base_url: str, sitekey: str = None, auth_headers: dict = N
             pass
 
 
+def get_token_on_site(page_url: str, sitekey: str, proxy: str = None,
+                      max_wait: int = 90, verbose: bool = True):
+    """在站点自己的页面里渲染 Turnstile 组件并自动点击，返回 token
+
+    与 get_turnstile_token 的区别：页面来源是站点本身（同源）。
+    部分站点（如 arityflow 新版签到子站）会校验 token 的 hostname，
+    本地 127.0.0.1 页面拿到的 token 会被拒绝，必须在真实域名下渲染。
+
+    Args:
+        page_url: 站点地址（如 https://qd.example.top）
+        sitekey: Turnstile sitekey
+    Returns:
+        token 字符串；失败返回 None
+    """
+    if proxy is None:
+        proxy = _get_system_proxy()
+
+    proc = None
+    token = None
+    try:
+        proc, dbg_port = _launch_chrome(proxy, url=page_url)
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = None
+            last_err = None
+            for _ in range(3):
+                try:
+                    browser = p.chromium.connect_over_cdp(f'http://127.0.0.1:{dbg_port}')
+                    break
+                except Exception as e:
+                    last_err = e
+                    time.sleep(3)
+            if browser is None:
+                raise RuntimeError(f'CDP 连接失败: {last_err}')
+            ctx = browser.contexts[0]
+            page = ctx.pages[0] if ctx.pages else ctx.new_page()
+            try:
+                page.wait_for_load_state('domcontentloaded', timeout=30000)
+            except Exception:
+                pass
+            token = _solve_in_page(page, sitekey, max_wait=max_wait, verbose=verbose)
+            browser.close()
+    except Exception as e:
+        print(f'[Turnstile] 站点页面求解失败: {e}')
+    finally:
+        if proc:
+            try:
+                proc.terminate()
+            except Exception:
+                pass
+    return token
+
+
 def get_turnstile_token(sitekey: str, proxy: str = None, max_wait: int = 90, verbose: bool = True):
     """本地页面渲染 Turnstile 组件并自动点击，返回 token（调试用）"""
     if proxy is None:

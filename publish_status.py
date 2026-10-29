@@ -97,6 +97,7 @@ def build_sites(accounts, checkin_index, month, today):
             continue
 
         info = query_one(account, month, today)
+        today_checkin = lookup_checkin(checkin_index, info['name'])
         sites.append({
             'name': info['name'],
             'site': info['masked_url'],
@@ -108,8 +109,14 @@ def build_sites(accounts, checkin_index, month, today):
             'total_quota_text': fmt_quota(info['total_quota']) if info['total_quota'] else '',
             'note': info['note'] or '',
             'error': info['error'] or '',
-            'checkin': lookup_checkin(checkin_index, info['name']),
+            'checkin': today_checkin,
         })
+        # 只读查询超时/失败，但当天签到脚本已确认成功 → 以签到结果为准
+        site = sites[-1]
+        if site['state'] == 'fail' and today_checkin and today_checkin.get('success'):
+            site['state'] = 'done'
+            site['error'] = ''
+            site['note'] = f"只读查询失败（{info['error']}），以当天签到结果为准"
     return sites
 
 

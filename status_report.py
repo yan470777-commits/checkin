@@ -159,6 +159,27 @@ def _log_checkin_today(s: requests.Session, base_url: str, today: str, timeout: 
     return None
 
 
+def _activity_checkin_today(base_url: str, account: dict, timeout: int):
+    """活动中心系站点（nemodesk）：按活动中心日历判断今日是否已签到（只读）
+
+    这类站的奖励是「白银」silver，不写入 /api/log/self，日志判定一律是「没签」，
+    必须用 /api/user/activities/status 的 calendar 判定。
+
+    Returns:
+        True 已签 / False 今天还没签 / None 无法判断（非活动中心系 / 登录失败）
+    """
+    if not (account.get('login_username') and account.get('login_password')):
+        return None
+    try:
+        from activity_checkin import verify_activity_checked_today
+    except ImportError:
+        return None
+    done, _why = verify_activity_checked_today(
+        base_url, account['login_username'], account['login_password'],
+        account.get('user_id'), timeout=min(timeout, 60), retries=1)
+    return done
+
+
 def load_accounts():
     """按 checkin.py 的优先级加载账号配置，返回 (账号列表, 来源说明)"""
     preexisting = os.environ.get('NEWAPI_ACCOUNTS', '')
@@ -384,6 +405,13 @@ def query_one(account: dict, month: str, today: str) -> dict:
 
     if not data.get('success'):
         server_msg = data.get('message') or f'签到统计接口返回失败 (HTTP {resp.status_code})'
+        # 先查活动中心日历（nemodesk 系奖励是 silver，不落标准签到日志，
+        # 用日志判会误报「没签」）；活动中心不可用再退回日志判定
+        state = _activity_checkin_today(base_url, account, timeout)
+        if state is not None:
+            info['today'] = state
+            info['note'] = f'标准签到未启用（{server_msg}），按活动中心日历判定'
+            return info
         state = _log_checkin_today(s, base_url, today, timeout)
         if state is not None:
             info['today'] = state

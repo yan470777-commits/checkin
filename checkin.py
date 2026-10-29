@@ -458,13 +458,55 @@ class NewAPICheckin:
                 result['message'] = f'HTTP {resp.status_code}: {data.get("message", "未知错误")}'
 
         except requests.exceptions.Timeout:
-            result['message'] = '请求超时'
+            verified = self._verify_after_timeout('请求超时')
+            if verified:
+                result.update(verified)
+            else:
+                result['message'] = '请求超时'
         except requests.exceptions.RequestException as e:
-            result['message'] = f'网络请求失败: {e}'
+            verified = self._verify_after_timeout(f'网络请求失败: {e}')
+            if verified:
+                result.update(verified)
+            else:
+                result['message'] = f'网络请求失败: {e}'
         except Exception as e:
             result['message'] = f'未知错误: {e}'
 
         return result
+
+    def _verify_after_timeout(self, reason: str):
+        """签到请求超时/异常后只读复查：服务端可能已经入账
+
+        避免「明明签到了却说超时」：无法确认时才返回 None（保持失败认定）
+        """
+        # 1. 标准 new-api：GET /api/user/checkin 里的 checked_in_today
+        try:
+            resp = self.session.get(f'{self.base_url}/api/user/checkin', timeout=20)
+            if resp.status_code == 200:
+                data = resp.json() or {}
+                d = data.get('data') if isinstance(data.get('data'), dict) else {}
+                if d.get('checked_in_today'):
+                    return {'success': True, 'already': True,
+                            'message': f'{reason}，复查确认今日已签到'}
+        except Exception:
+            pass
+        # 2. 活动中心系（nemodesk）：正常里的 GET /api/user/checkin 不含今日状态，
+        #    改用活动中心日历判断
+        if self.login_username and self.login_password:
+            try:
+                from activity_checkin import verify_activity_checked_today
+                done, why = verify_activity_checked_today(
+                    self.base_url, self.login_username, self.login_password,
+                    self.user_id, timeout=30)
+                if done is True:
+                    return {'success': True, 'already': True,
+                            'message': f'{reason}，复查确认{why}'}
+                if done is False:
+                    return {'success': False,
+                            'message': f'{reason}，复查确认今日仍未签到（{why}）'}
+            except Exception:
+                pass
+        return None
 
     @staticmethod
     def _solve_pow(prefix: str, difficulty: int) -> str:

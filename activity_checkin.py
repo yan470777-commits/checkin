@@ -18,6 +18,7 @@
 """
 
 import uuid
+import time
 import requests
 
 
@@ -97,6 +98,22 @@ def checkin_activity_center(base_url: str, jwt: str, user_id, timeout: int = 30)
         )
         result = resp.json()
     except Exception as e:
+        # 超时/连接被重置 ≠ 没签上：服务端可能已收到并入账。
+        # 等两秒后只读复查一次，确认到底成没成再下结论。
+        try:
+            time.sleep(2)
+            recheck = requests.get(f'{base_url}/api/user/activities/status',
+                                   headers=headers, timeout=timeout).json()
+            data2 = recheck.get('data') or {}
+            cal2 = (data2.get('checkin') or {}).get('calendar') or []
+            recs = [r for r in cal2 if r.get('day') == data2.get('today')]
+            if recs:
+                silver = recs[0].get('silver', 0)
+                return {'success': True, 'already': True,
+                        'message': f'签到请求超时，复查确认今日已签到（+{silver} 白银）',
+                        'quota_awarded': silver}
+        except Exception:
+            pass
         return {'success': False, 'message': f'签到命令异常: {e}'}
 
     if result.get('success'):
@@ -113,7 +130,81 @@ def checkin_activity_center(base_url: str, jwt: str, user_id, timeout: int = 30)
                 'quota_awarded': silver}
 
     msg = result.get('message') or result.get('error', {}).get('message') or str(result)
+    low = msg.lower()
+    if 'already' in low or '已签到' in msg or '已领取' in msg:
+        # 服务端说「已签到」时以它为准，别当成失败
+        done, why, silver = _query_today(base_url, headers, timeout, today=today)
+        if done is True:
+            return {'success': True, 'already': True, 'message': why,
+                    'quota_awarded': silver}
+        return {'success': True, 'already': True, 'message': msg}
     return {'success': False, 'message': f'活动中心签到失败: {msg}'}
+
+
+def _query_today(base_url: str, headers: dict, timeout: int, today=None):
+    """只读复查：查活动中心状态 → (True/False/None, 说明, silver)"""
+    try:
+        resp = requests.get(f'{base_url}/api/user/activities/status',
+                            headers=headers, timeout=timeout)
+        if resp.status_code == 404:
+            return None, '该站没有活动中心接口', 0
+        data = (resp.json() or {}).get('data') or {}
+    except Exception as e:
+        return None, f'状态查询异常: {e}', 0
+    checkin = data.get('checkin') or {}
+    if not checkin:
+        return None, '该站无活动中心数据', 0
+    today = today or data.get('today')
+    records = [r for r in (checkin.get('calendar') or []) if r.get('day') == today]
+    if records:
+        silver = records[0].get('silver', 0)
+        return True, f'今日已签到（+{silver} 白银）', silver
+    return False, '活动中心显示今日未签到', 0
+
+
+def verify_activity_checked_today(base_url: str, username: str, password: str, user_id,
+                                  timeout: int = 60, retries: int = 2):
+    """只读复查：活动中心系站点今天到底签到了没有
+
+    用途：签到命令发出后请求超时/连接被重置时，服务端往往已经入账，
+    这时不能再报「失败」，否则手机上会显示「明明签到了却说超时」。
+
+    Returns:
+        (True, 说明)  今天已签到
+        (False, 说明) 今天确实还没签到
+        (None, 说明)  查不出来（该站不是活动中心系 / 登录失败 / 接口不可用）
+    """
+    import time
+
+    base_url = base_url.rstrip('/')
+    jwt = jwt_login(base_url, username, password, timeout)
+    if not jwt:
+        return None, '账号密码登录失败，无法复查'
+    headers = _headers(base_url, jwt, user_id)
+
+    last_msg = ''
+    for i in range(max(1, retries)):
+        try:
+            resp = requests.get(f'{base_url}/api/user/activities/status',
+                                headers=headers, timeout=timeout)
+            if resp.status_code == 404:
+                return None, '该站没有活动中心接口'
+            data = (resp.json() or {}).get('data') or {}
+        except Exception as e:
+            last_msg = f'状态查询异常: {e}'
+            time.sleep(2)
+            continue
+
+        checkin = data.get('checkin') or {}
+        if not checkin:
+            return None, '该站无活动中心数据'
+        today = data.get('today')
+        records = [r for r in (checkin.get('calendar') or []) if r.get('day') == today]
+        if records:
+            return True, f'今日已签到（+{records[0].get("silver", 0)} 白银）'
+        last_msg = '活动中心显示今日未签到'
+        time.sleep(2)
+    return False, last_msg
 
 
 def checkin_xingya(base_url: str, jwt: str, user_id, timeout: int = 30) -> dict:

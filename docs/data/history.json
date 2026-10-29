@@ -1,69 +1,31 @@
 [
   {
     "date": "2026-10-26",
-    "updated_at": "2026-10-26 19:42:36",
+    "updated_at": "2026-10-26 15:01:01",
     "summary": {
       "total": 12,
-      "done": 8,
+      "done": 9,
       "miss": 0,
       "unknown": 1,
-      "fail": 1,
+      "fail": 0,
       "skipped": 2
     },
-    "checkin_run": {
-      "success": 10,
-      "failed": 0,
-      "skipped": 2
-    }
-  },
-  {
-    "date": "2026-10-27",
-    "updated_at": "2026-10-27 12:17:54",
-    "summary": {
-      "total": 12,
-      "done": 8,
-      "miss": 0,
-      "unknown": 1,
-      "fail": 1,
-      "skipped": 2
-    },
-    "checkin_run": {
-      "success": 10,
-      "failed": 0,
-      "skipped": 2
-    }
-  },
-  {
-    "date": "2026-10-28",
-    "updated_at": "2026-10-28 05:10:28",
-    "summary": {
-      "total": 12,
-      "done": 8,
-      "miss": 0,
-      "unknown": 1,
-      "fail": 1,
-      "skipped": 2
-    },
-    "checkin_run": {
-      "success": 10,
-      "failed": 0,
-      "skipped": 2
-    }
+    "checkin_run": {}
   },
   {
     "date": "2026-10-29",
-    "updated_at": "2026-10-29 05:35:03",
+    "updated_at": "2026-10-29 13:33:45",
     "summary": {
       "total": 12,
-      "done": 7,
-      "miss": 1,
+      "done": 9,
+      "miss": 0,
       "unknown": 1,
-      "fail": 1,
+      "fail": 0,
       "skipped": 2
     },
     "checkin_run": {
-      "success": 9,
-      "failed": 1,
+      "success": 10,
+      "failed": 0,
       "skipped": 2
     }
   }
