@@ -1,0 +1,227 @@
+{
+  "updated_at": "2026-10-31 05:25:56",
+  "date": "2026-10-31",
+  "month": "2026-10",
+  "source": "环境变量 NEWAPI_ACCOUNTS",
+  "summary": {
+    "total": 12,
+    "done": 7,
+    "miss": 1,
+    "unknown": 1,
+    "fail": 1,
+    "skipped": 2
+  },
+  "checkin_run": {
+    "success": 8,
+    "failed": 2,
+    "skipped": 2
+  },
+  "sites": [
+    {
+      "name": "站1-nemodesk",
+      "site": "https://origin.***.top",
+      "user": "",
+      "state": "fail",
+      "month_days": null,
+      "total_days": null,
+      "total_quota": null,
+      "total_quota_text": "",
+      "note": "",
+      "error": "请求超时",
+      "checkin": {
+        "success": false,
+        "message": "账号密码登录失败，无法获取 JWT",
+        "quota_awarded": null,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站2-crouter",
+      "site": "",
+      "user": "",
+      "state": "skipped",
+      "month_days": null,
+      "total_days": null,
+      "total_quota": null,
+      "total_quota_text": "",
+      "note": "手动签到站（配置了 disabled），脚本不参与，需要你在手机上自己点",
+      "error": "",
+      "checkin": null
+    },
+    {
+      "name": "站3-youkies",
+      "site": "https://newapi.***.space",
+      "user": "***",
+      "state": "unknown",
+      "month_days": null,
+      "total_days": null,
+      "total_quota": null,
+      "total_quota_text": "",
+      "note": "签到功能未启用",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "该站未开启签到功能（无需签到）",
+        "quota_awarded": null,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站4-xingya",
+      "site": "https://xingya.***.site",
+      "user": "***",
+      "state": "miss",
+      "month_days": 11,
+      "total_days": 45,
+      "total_quota": 5466892,
+      "total_quota_text": "5.47M",
+      "note": "标准签到已停用，签到日志里今天还没有领取记录",
+      "error": "",
+      "checkin": {
+        "success": false,
+        "message": "账号密码登录失败，无法获取 JWT",
+        "quota_awarded": null,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站5-catcat",
+      "site": "https://api.***.top",
+      "user": "***",
+      "state": "done",
+      "month_days": 27,
+      "total_days": 44,
+      "total_quota": 1018517965,
+      "total_quota_text": "1018.52M",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "Check-in successful",
+        "quota_awarded": 18873730,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站6-limao",
+      "site": "https://limao-api.***.com",
+      "user": "***",
+      "state": "done",
+      "month_days": 12,
+      "total_days": 12,
+      "total_quota": 389539,
+      "total_quota_text": "389.54K",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "签到成功 (Turnstile)",
+        "quota_awarded": 24082,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站7-wanwanzhou",
+      "site": "",
+      "user": "",
+      "state": "skipped",
+      "month_days": null,
+      "total_days": null,
+      "total_quota": null,
+      "total_quota_text": "",
+      "note": "手动签到站（配置了 disabled），脚本不参与，需要你在手机上自己点",
+      "error": "",
+      "checkin": null
+    },
+    {
+      "name": "站8-xincloud",
+      "site": "https://api.***.top",
+      "user": "***",
+      "state": "done",
+      "month_days": 13,
+      "total_days": 13,
+      "total_quota": 485126,
+      "total_quota_text": "485.13K",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "Check-in successful (Turnstile)",
+        "quota_awarded": 3661,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站9-htai91",
+      "site": "https://htai91.***.com",
+      "user": "yan***",
+      "state": "done",
+      "month_days": 17,
+      "total_days": 17,
+      "total_quota": 27574347,
+      "total_quota_text": "27.57M",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "Check-in successful",
+        "quota_awarded": 1119744,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站10-arityflow",
+      "site": "https://www.***.top",
+      "user": "***",
+      "state": "done",
+      "month_days": null,
+      "total_days": null,
+      "total_quota": null,
+      "total_quota_text": "",
+      "note": "签到走独立子站 https://qd.***.top，连签 6 天 / 累计 20 天",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "签到成功，获得 55 额度（识别码 24kb）",
+        "quota_awarded": 55,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站11-kapibala",
+      "site": "https://kapibala.***.asia",
+      "user": "***",
+      "state": "done",
+      "month_days": 12,
+      "total_days": 12,
+      "total_quota": 1839743,
+      "total_quota_text": "1.84M",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "今日已签到",
+        "quota_awarded": null,
+        "advice": ""
+      }
+    },
+    {
+      "name": "站12-changchunxu",
+      "site": "https://changchunxu.***.xyz",
+      "user": "***",
+      "state": "done",
+      "month_days": 10,
+      "total_days": 10,
+      "total_quota": 171618,
+      "total_quota_text": "171.62K",
+      "note": "",
+      "error": "",
+      "checkin": {
+        "success": true,
+        "message": "Already checked in today",
+        "quota_awarded": null,
+        "advice": ""
+      }
+    }
+  ]
+}
