@@ -62,5 +62,22 @@
       "failed": 2,
       "skipped": 2
     }
+  },
+  {
+    "date": "2026-11-01",
+    "updated_at": "2026-11-01 04:25:52",
+    "summary": {
+      "total": 12,
+      "done": 8,
+      "miss": 0,
+      "unknown": 1,
+      "fail": 1,
+      "skipped": 2
+    },
+    "checkin_run": {
+      "success": 8,
+      "failed": 2,
+      "skipped": 2
+    }
   }
 ]
